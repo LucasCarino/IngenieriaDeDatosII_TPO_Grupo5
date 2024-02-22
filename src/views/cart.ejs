@@ -4,9 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Document</title>
 </head>
 <body>
+    <%- include('navbar') %>
     <h1>Carrito de compras</h1>
+    <ul>
+        <% products.forEach(item => { %>
+            <li>
+                <h2><%= item.name %></h2>
+                <p>Cantidad: <%= item.quantity %></p>
+                <form action="/cart/delete/<%= item._id %>" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit"><i class="fas fa-trash"></i></button>
+                </form>
+            </li>
+        <% }); %>
+    </ul>
+    <h2>Total: <%= total %></h2>
+
+    <a href="/cart/checkout">Comprar</a>
+
+    <% if (messages.success) { %>
+        <div class="alert alert-success">
+            <%= messages.success %>
+        </div>
+    <% } %>
+    <% if (messages.error) { %>
+        <div class="alert alert-danger">
+            <%= messages.error %>
+        </div>
+    <% } %>
 </body>
 </html>

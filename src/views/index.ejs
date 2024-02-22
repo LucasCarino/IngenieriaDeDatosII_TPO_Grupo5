@@ -7,9 +7,12 @@
     <title>Document</title>
 </head>
 <body>
+    <%- include('navbar') %>
     <h1>Hello</h1>
-
-    <a href="/user/register">Registrarse</a><br><br>
-    <a href="/user/login">Iniciar Sesión</a>
+    <ul>
+        <% if(messages.success) { %>
+            <li><%= messages.success %></li>
+        <% } %>
+    </ul>
 </body>
 </html>

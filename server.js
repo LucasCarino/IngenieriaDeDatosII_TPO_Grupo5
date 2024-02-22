@@ -6,6 +6,7 @@ const path = require('path');
 const { redis, connectDB } = require('./db');
 const RedisStore = require("connect-redis").default;
 const router = express.Router();
+const cartController = require('./src/controllers/cartController');
 
 const store = new RedisStore({ client: redis });
 connectDB();
@@ -33,27 +34,38 @@ app.use(session({
   })
 );
 
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
+app.use(async (req, res, next) => {
+  if (req.user) {
+      const totalItemCount = await cartController.getCartItemCount(req.user.id);
+      res.locals.totalItemCount = totalItemCount;
+  }
+  next();
+});
 
 app.use((req, res, next) => {
   res.setHeader("Content-Security-Policy", "img-src 'self' https:");
   next();
 });
 
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+
 // routes
 app.get('/', (req, res) => {
-  if (req.session && req.session.user) {
-      res.redirect('/user/dashboard');
-  } else {
-      res.render('index');
-  }
+  res.render('index');
 });
 
 app.use('/user', userRouter);
 app.use('/products', productRouter);
 app.use('/cart', cartRouter);
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

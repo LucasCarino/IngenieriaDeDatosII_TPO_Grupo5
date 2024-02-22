@@ -20,23 +20,23 @@ exports.logoutGet = (req, res) => {
         if (err) {
             return next(err);
         }
-        req.flash('success_msg', 'Sesión cerrada');
-        res.redirect('/user/login');
+        req.flash('success', 'Sesión cerrada');
+        res.redirect('/');
     });
 }
 
 exports.registerPost = async (req, res) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
     
     let errors = [];
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password) {
         errors.push({ message: 'Por favor, rellene todos los campos' });
     }
     if (password.length < 6) {
         errors.push({ message: 'La contraseña debe tener al menos 6 caracteres' });
     }
     if (errors.length > 0) {
-        res.render('register', { errors, name, email, password, role });
+        res.render('register', { errors, name, email, password });
     } else {
         let hashedPassword = await bcrypt.hash(password, 10);
         pool.query(
@@ -47,16 +47,16 @@ exports.registerPost = async (req, res) => {
                 }
                 if (results.rows.length > 0) {
                     errors.push({ message: 'El email ya está registrado' });
-                    res.render('register', { errors, name, email, password, role });
+                    res.render('register', { errors, name, email, password });
                 } else {
                     pool.query(
-                        `INSERT INTO users (name, email, password, role)
-                        VALUES ($1, $2, $3, $4)
-                        RETURNING id, password`, [name, email, hashedPassword, role], (err, results) => {
+                        `INSERT INTO users (name, email, password)
+                        VALUES ($1, $2, $3)
+                        RETURNING id, password`, [name, email, hashedPassword], (err, results) => {
                             if (err) {
                                 throw err;
                             }
-                            req.flash('success_msg', 'Estás registrado. Por favor, inicia sesión');
+                            req.flash('success', 'Estás registrado. Por favor, inicia sesión');
                             res.redirect('/user/login');
                         }
                     );
@@ -97,4 +97,3 @@ exports.registerUser = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-

@@ -8,21 +8,17 @@ exports.init = (_client) => {
 }
 
 exports.getAllItems = async (userId) => {
-    console.log(userId);
     return new Promise((resolve, reject) => {
         client.hgetall(`cart:${userId}`, (err, res) => {
             if(err) {
                 return reject(err);
             }
             resolve(res);
-            console.log(res);
         });
     });
 }
 
 exports.addItem = (itemId, userId) => {
-    console.log("estoy en el cart controller")
-    // console.log(client);
     return new Promise((resolve, reject) => {
         client.hget(`cart:${userId}`, itemId, (err, obj) => {
             if(err) {
@@ -49,11 +45,43 @@ exports.addItem = (itemId, userId) => {
 
 exports.removeItem = async (itemId, userId) => {
     return new Promise((resolve, reject) => {
-        client.hdel(`cart:${userId}`, itemId, (err, res) => {
+        client.hincrby(`cart:${userId}`, itemId, -1, (err, res) => {
+            if(err) {
+                return reject(err);
+            }
+            if (res <= 0) {
+                client.hdel(`cart:${userId}`, itemId, (err, res) => {
+                    if(err) {
+                        return reject(err);
+                    }
+                    resolve(res);
+                });
+            } else {
+                resolve(res);
+            }
+        });
+    });
+};
+
+exports.getCartItemCount = async (userId) => {
+    return new Promise((resolve, reject) => {
+        client.hvals(`cart:${userId}`, (err, res) => {
+            if(err) {
+                return reject(err);
+            }
+            const totalItemCount = res.reduce((total, count) => total + parseInt(count), 0);
+            resolve(totalItemCount);
+        });
+    });
+};
+
+exports.clearCart = async (userId) => {
+    return new Promise((resolve, reject) => {
+        client.del(`cart:${userId}`, (err, res) => {
             if(err) {
                 return reject(err);
             }
             resolve(res);
         });
     });
-}
+};

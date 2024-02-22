@@ -1,0 +1,19 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<nav>
+    <a href="/products">Catálogo</a> |
+    <% if (!user) { %>
+        <a href="/user/login">Iniciar sesión</a> |
+        <a href="/user/register">Registrarse</a>
+    <% } else { %>
+        <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
+        <% if (totalItemCount > 0) { %>
+            <span><%= totalItemCount %></span>
+        <% } %> | 
+        <a href="/user/logout">Logout</a>
+    <% } %>
+</nav>

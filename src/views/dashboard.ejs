@@ -6,8 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
+
 <body>
-    <a href="/user/logout">Cerrar Sesión</a>
+    <%- include('navbar') %>
     <h1>Holaaa <%= user.charAt(0).toUpperCase() + user.slice(1) %></h1>
 </body>
 </html>

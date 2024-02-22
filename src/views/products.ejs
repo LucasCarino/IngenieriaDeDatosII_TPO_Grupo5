@@ -8,17 +8,17 @@
     <title>Document</title>
 </head>
 <body>
+    <%- include('navbar') %>
     <h1>Product Catalog</h1>
-    <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
+
     <ul>
     <% products.forEach(function(product) { %>
       <li>
         <a href="/products/<%= product.id %>">
-          <!-- <img src="<%= product.url %>"> -->
+          <!-- <img src="<%= product.url %>" alt="Product image"> -->
           <h2><%= product.name %></h2>
           <p>Price: <%= product.price %></p>
         </a>
-        <!-- <button>Agregar al carrito</button> -->
       </li>
     <% }); %>
     </ul>

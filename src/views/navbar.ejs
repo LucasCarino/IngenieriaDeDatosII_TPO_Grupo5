@@ -3,17 +3,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="/stylesheets/style.css" rel="stylesheet">
 </head>
-<nav>
-    <a href="/products">Catálogo</a> |
-    <% if (!user) { %>
-        <a href="/user/login">Iniciar sesión</a> |
-        <a href="/user/register">Registrarse</a>
-    <% } else { %>
-        <a href="/cart"><i class="fas fa-shopping-cart"></i></a>
-        <% if (totalItemCount > 0) { %>
-            <span><%= totalItemCount %></span>
-        <% } %> | 
-        <a href="/user/logout">Logout</a>
-    <% } %>
+<nav class="bg-teal-100 shadow-md flex justify-end items-center p-5">
+    <div class="flex space-x-4">
+        <a href="/products" class="text-blue-900 hover:text-blue-700 transition duration-200">Catálogo</a>
+        <% if (!user) { %>
+            <a href="/user/login" class="text-blue-900 hover:text-blue-700 transition duration-200">Iniciar sesión</a>
+            <a href="/user/register" class="text-blue-900 hover:text-blue-700 transition duration-200">Registrarse</a>
+        <% } else { %>
+            <a href="/cart" class="text-blue-900 hover:text-blue-700 transition duration-200">
+                <i class="fas fa-shopping-cart"></i>
+                <% if (totalItemCount > 0) { %>
+                    <span class="ml-1"><%= totalItemCount %></span>
+                <% } %>
+            </a>
+            <a href="/user/logout" class="text-blue-900 hover:text-blue-700 transition duration-200">Logout</a>
+        <% } %>
+    </div>
 </nav>

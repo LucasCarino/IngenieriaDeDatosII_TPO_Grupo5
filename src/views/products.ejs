@@ -7,20 +7,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Document</title>
 </head>
-<body>
-    <%- include('navbar') %>
-    <h1>Product Catalog</h1>
+<body class="bg-teal-200">
+  <%- include('navbar') %>
+  <h1 class="text-center text-blue-900 text-3xl font-bold p-5">Product Catalog</h1>
 
-    <ul>
-    <% products.forEach(function(product) { %>
-      <li>
-        <a href="/products/<%= product.id %>">
-          <!-- <img src="<%= product.url %>" alt="Product image"> -->
-          <h2><%= product.name %></h2>
-          <p>Price: <%= product.price %></p>
-        </a>
-      </li>
-    <% }); %>
-    </ul>
+  <ul class="grid grid-cols-4 gap-4 p-5">
+  <% products.forEach(function(product) { %>
+    
+    <li class="text-center bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200">
+      <a href="/products/<%= product.id %>" class="block p-4 hover:text-blue-700 transition duration-200">
+        <!-- <img src="<%= product.url %>" alt="Product image"> -->
+        <h2 class="text-blue-900 text-xl font-bold mb-2"><%= product.name %></h2>
+        <p class="text-blue-700">$<%= product.price %></p>
+      </a>
+    </li>
+  <% }); %>
+  </ul>
 </body>
 </html>

@@ -7,34 +7,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Document</title>
 </head>
-<body>
+<body class="bg-teal-200">
     <%- include('navbar') %>
-    <h1>Carrito de compras</h1>
-    <ul>
-        <% products.forEach(item => { %>
-            <li>
-                <h2><%= item.name %></h2>
-                <p>Cantidad: <%= item.quantity %></p>
-                <form action="/cart/delete/<%= item._id %>" method="POST">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit"><i class="fas fa-trash"></i></button>
-                </form>
-            </li>
-        <% }); %>
-    </ul>
-    <h2>Total: <%= total %></h2>
+    <div class="max-w-2xl mx-auto p-6">
+        <h1 class="text-center text-blue-900 text-3xl font-bold mb-6">Carrito de compras</h1>
+        <ul class="space-y-4">
+            <% products.forEach(item => { %>
+                <li class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-blue-900 text-xl font-bold mb-2"><%= item.name %></h2>
+                        <p class="text-blue-700">Cantidad: <%= item.quantity %></p>
+                    </div>
+                    <form action="/cart/delete/<%= item._id %>" method="POST" class="ml-4">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="text-red-500 hover:text-red-700 transition duration-200">
+                            <i class="fas fa-trash fa-lg"></i>
+                        </button>
+                    </form>
+                </li>
+            <% }); %>
+        </ul>
+        <h2 class="text-center text-blue-900 text-2xl font-bold mt-6">Total: <%= total %></h2>
 
-    <a href="/cart/checkout">Comprar</a>
+        <a href="/cart/checkout" class="block w-full text-center mt-6 px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-700 transition duration-200 cursor-pointer">Comprar</a>
 
-    <% if (messages.success) { %>
-        <div class="alert alert-success">
-            <%= messages.success %>
-        </div>
-    <% } %>
-    <% if (messages.error) { %>
-        <div class="alert alert-danger">
-            <%= messages.error %>
-        </div>
-    <% } %>
+        <% if (messages.success) { %>
+            <div class="alert alert-success mt-4">
+                <%= messages.success %>
+            </div>
+        <% } %>
+        <% if (messages.error) { %>
+            <div class="alert alert-danger mt-4">
+                <%= messages.error %>
+            </div>
+        <% } %>
+    </div>
 </body>
 </html>

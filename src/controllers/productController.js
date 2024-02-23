@@ -23,4 +23,4 @@ exports.getProductById = async (req, res) => {
         console.error(err);
         res.status(500).send('An error occurred while trying to find the product');
     }
-};
+};  

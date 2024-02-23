@@ -82,7 +82,7 @@ exports.loginPost = (req, res, next) => {
           return next(err);
         }
         req.session.user = req.user;
-        return res.redirect('/user/dashboard');
+        return res.redirect('/');
       });
     })(req, res, next);
   }

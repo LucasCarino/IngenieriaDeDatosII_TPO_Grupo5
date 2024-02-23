@@ -34,10 +34,10 @@ app.use(session({
   })
 );
 
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
   if (req.user) {
@@ -47,10 +47,6 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", "img-src 'self' https:");
-  next();
-});
 
 app.use((req, res, next) => {
   res.locals.user = req.user;

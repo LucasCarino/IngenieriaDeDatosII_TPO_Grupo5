@@ -25,6 +25,12 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/add', async (req, res) => {
+
+    if (!req.user) {
+        req.flash('error', 'Debes iniciar sesión para comprar');
+        return res.redirect('/user/login');
+    }
+
     let userId = req.user.id;
     let itemId = req.body.itemId;
     try {

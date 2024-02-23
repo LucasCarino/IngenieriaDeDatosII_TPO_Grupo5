@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
-const Order = require('../models/Order');
 const cartController = require('../controllers/cartController');
+const billController = require('../controllers/billController');
+const orderController = require('../controllers/orderController');
 
 router.get('/', async (req, res) => {
     let userId = req.user.id;
     let cartItems = await cartController.getAllItems(userId);
-
 
     let products = await Product.find({
         _id: { $in: Object.keys(cartItems) }
@@ -77,36 +77,8 @@ router.post('/checkout', async (req, res) => {
     let userId = req.user.id;
     let customerDetails = req.body;
     try {
-        let cartItems = await cartController.getAllItems(userId);
-        let products = await Product.find({
-            _id: { $in: Object.keys(cartItems) }
-        });
-        let subtotal = 0;
-        let productsWithQuantity = products.map(product => {
-            let productObj = product.toObject();
-            productObj.quantity = cartItems[productObj._id.toString()];
-            subtotal += productObj.price * productObj.quantity;
-            return {
-                product: productObj._id,
-                quantity: productObj.quantity,
-                price: productObj.price
-            };
-        });
-
-        let taxes = subtotal * 0.15;
-        let total = subtotal + taxes;
-
-        let order = new Order({
-            userId,
-            customerDetails,
-            products: productsWithQuantity,
-            subtotal,
-            taxes,
-            total
-        });
-
-        await order.save();
-
+        let order = await orderController.createOrder(userId, customerDetails);
+        await billController.createBill(order._id);
         await cartController.clearCart(userId);
         req.flash('success', 'Pedido confirmado, gracias por tu compra!');
     } catch (error) {

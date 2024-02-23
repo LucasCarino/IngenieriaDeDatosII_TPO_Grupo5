@@ -68,27 +68,32 @@ exports.registerPost = async (req, res) => {
 
 exports.loginPost = (req, res, next) => {
     passport.authenticate('local', {
-      failureRedirect: '/user/login',
-      failureFlash: true
+        failureRedirect: '/user/login',
+        failureFlash: true
     }, (err, user, info) => {
-      if (err) {
-        req.flash('error', 'Un error inesperado ha ocurrido');
-        return next(err);
-      }
-      if (!user) {
-        req.flash('error', info.message);
-        return res.redirect('/user/login');
-      }
-      req.logIn(user, function(err) {
         if (err) {
             req.flash('error', 'Un error inesperado ha ocurrido');
             return next(err);
         }
-        req.session.user = req.user;
-        return res.redirect('/');
-      });
+        if (!user) {
+            req.flash('error', info.message);
+            return res.redirect('/user/login');
+        }
+        req.logIn(user, function(err) {
+            if (err) {
+                req.flash('error', 'Un error inesperado ha ocurrido');
+                return next(err);
+            }
+            req.session.user = req.user;
+            if (req.body.remember) {
+                req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 días
+            } else {
+                req.session.cookie.expires = false;
+            }
+            return res.redirect('/');
+        });
     })(req, res, next);
-  }
+}
 
 exports.registerUser = async (req, res) => {
     const { name, email, password } = req.body;

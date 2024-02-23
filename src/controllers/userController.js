@@ -72,14 +72,17 @@ exports.loginPost = (req, res, next) => {
       failureFlash: true
     }, (err, user, info) => {
       if (err) {
+        req.flash('error', 'Un error inesperado ha ocurrido');
         return next(err);
       }
       if (!user) {
+        req.flash('error', info.message);
         return res.redirect('/user/login');
       }
       req.logIn(user, function(err) {
         if (err) {
-          return next(err);
+            req.flash('error', 'Un error inesperado ha ocurrido');
+            return next(err);
         }
         req.session.user = req.user;
         return res.redirect('/');
@@ -93,7 +96,6 @@ exports.registerUser = async (req, res) => {
         const newUser = await db.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *', [name, email, password]);
         res.status(201).json(newUser.rows[0]);
     } catch (error) {
-        console.error('Error registering user:', error);
         res.status(500).send('Internal Server Error');
     }
 };

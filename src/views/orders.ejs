@@ -12,7 +12,7 @@
     <title>Mis pedidos</title>
 </head>
 
-<body class="bg-teal-200">
+<body class="bg-zinc-100 pt-[70px]">
     <%- include('navbar') %>
         <h1 class="text-center text-2xl font-bold my-6">Mis pedidos</h1>
         <div class="w-full max-w-4xl mx-auto">
@@ -27,7 +27,7 @@
                 </thead>
                 <tbody>
                     <% orders.forEach(function(order) { %>
-                        <tr class="order-row border-b hover:bg-orange-100">
+                        <tr class="order-row border-b hover:bg-orange-100 cursor-pointer" data-category="<%= category %>">
                             <td class="p-3 px-5">
                                 <%= order._id %>
                             </td>
@@ -35,9 +35,14 @@
                                 <%= order.customerDetails.payment %>
                             </td>
                             <td class="p-3 px-5">
-                                <%= order.total %>
+                                <% if (category === 'medium') { %>
+                                    <%= (order.total * 0.90).toFixed(2) %>
+                                <% } else if (category === 'top') { %>
+                                    <%= (order.total * 0.80).toFixed(2) %>
+                                <% } else { %>
+                                    <%= order.total %>
+                                <% } %>
                             </td>
-                            <!-- Agrega más celdas según los detalles que quieras mostrar -->
                         </tr>
                         <% }); %>
                 </tbody>
@@ -52,6 +57,17 @@
     $(function () {
         $(".order-row").on("click", function () {
             var orderId = $(this).find("td:first").text().trim();
+
+            var category = $(this).data('category');
+
+            var discount = 0;
+            if (category === 'medium') {
+                discount = 0.10;
+            } else if (category === 'top') {
+                discount = 0.20;
+            }
+
+
             $.get("/orders/" + orderId + "/products", function (products) {
                 var productDetails = "";
                 var subtotal = 0;
@@ -67,6 +83,8 @@
 
                 let taxes = subtotal * 0.15;
                 let total = subtotal + taxes;
+                let discountAmount = total * discount;
+                total -= discountAmount;
 
                 productDetails += `
                 <tr class="border-t border-gray-200 mt-5">
@@ -76,11 +94,20 @@
                 <tr>
                     <td class="py-3 px-6 text-right" colspan="2">Impuestos (15%)</td>
                     <td class="py-3 px-6 text-center">${taxes.toFixed(2)}</td>
-                </tr>
+                </tr>`;
+                        if (discount > 0) {
+                            productDetails += `
+                    <tr>
+                        <td class="py-3 px-6 text-right" colspan="2">Descuento (${discount * 100}%)</td>
+                        <td class="py-3 px-6 text-center">-$${discountAmount.toFixed(2)}</td>
+                    </tr>`;
+                        }
+                        productDetails += `
                 <tr>
                     <td class="py-3 px-6 text-right" colspan="2">Total</td>
                     <td class="py-3 px-6 text-center font-bold">${total.toFixed(2)}</td>
                 </tr>`;
+
 
 
                 $("#product-details").html(`

@@ -15,6 +15,7 @@ const userRouter = require("./src/routes/userRoutes");
 const productRouter = require("./src/routes/productRoutes");
 const cartRouter = require("./src/routes/cartRoutes");
 const orderRouter = require("./src/routes/orderRoutes");
+const adminRouter = require("./src/routes/adminRoutes");
 
 const initializePassport = require("./passportConfig");
 initializePassport(passport);
@@ -45,9 +46,11 @@ app.use(async (req, res, next) => {
   if (req.user) {
     const totalItemCount = await cartController.getCartItemCount(req.user.id);
     res.locals.totalItemCount = totalItemCount;
-    res.locals.userName = req.user.name; // Agregar el nombre del usuario a res.locals
+    res.locals.userName = req.user.name;
+    res.locals.isAdmin = req.user.isAdmin;
   } else {
-    res.locals.userName = null; // Agregar un valor nulo para userName si el usuario no está logueado
+    res.locals.userName = null; 
+    res.locals.isAdmin = false;
   }
   next();
 });
@@ -66,6 +69,7 @@ app.use("/user", userRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use("/orders", orderRouter);
+app.use("/admin", adminRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

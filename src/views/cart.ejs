@@ -1,46 +1,85 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <title>Document</title>
-</head>
-<body class="bg-teal-200">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <style>
+            body.loaded::after {
+                content: "";
+                background: url(https://static.vecteezy.com/system/resources/previews/012/791/182/original/solid-shopping-cart-icon-free-vector.jpg) no-repeat;
+                background-size: 55%;
+                background-position: right bottom 200%;
+                opacity: 0.2;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                position: absolute;
+                z-index: -1;   
+            }
+            body {
+                min-height: 100vh;
+                position: relative;
+            }
+        </style>
+        <title>Document</title>
+    </head>
+<body class="bg-zinc-100 relative pt-[70px]">
     <%- include('navbar') %>
     <div class="max-w-2xl mx-auto p-6">
-        <h1 class="text-center text-blue-900 text-3xl font-bold mb-6">Carrito de compras</h1>
-        <ul class="space-y-4">
-            <% products.forEach(item => { %>
-                <li class="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-blue-900 text-xl font-bold mb-2"><%= item.name %></h2>
-                        <p class="text-blue-700">Cantidad: <%= item.quantity %></p>
+        <h1 class="text-center text-stone-800 text-3xl font-bold mb-6">Carrito de compras</h1>
+        <ul class="divide-y divide-gray-200 shadow-sm bg-white rounded-md">
+
+
+            <div class="max-w-2xl mx-auto p-6">
+                <% if (products.length===0) { %>
+                    <h2 class="text-center text-stone-800 text-2xl font-bold mt-6">No tienes ningún producto en tu carrito</h2>
+                    <a href="/products" class="block w-full text-center mt-6 px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-700 transition duration-200 cursor-pointer">Volver a productos</a>
+                <% } else { %>
+                    <ul class="divide-y divide-gray-200 shadow-sm bg-white rounded-md">
+                        <% products.forEach(item=> { %>
+                            <li class="p-4 flex justify-between items-center">
+                                <div>
+                                    <h2 class="text-stone-800 text-xl font-bold mb-2"><%= item.name %></h2>
+                                    <p class="text-stone-800">Cantidad: <%= item.quantity %></p>
+                                </div>
+                                <form action="/cart/delete/<%= item._id %>" method="POST" class="ml-4">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <% if (item.quantity > 1) { %>
+                                        <button type="submit" class="text-white bg-red-500 p-2 hover:bg-red-700 transition duration-200 shadow-sm rounded-md">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    <% } else { %>
+                                        <button type="submit" class="text-white bg-red-500 p-2 hover:bg-red-700 transition duration-200 shadow-sm rounded-md">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    <% } %>
+                                </form>
+                            </li>
+                        <% }); %>
+                    </ul>
+                    <h2 class="text-center text-stone-800 text-2xl font-bold mt-6">Total: $<%= total.toFixed(2) %></h2>
+                    <a href="/cart/checkout" class="block w-full text-center mt-6 px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-700 transition duration-200 cursor-pointer">Comprar</a>
+                <% } %>
+                <% if (messages.success) { %>
+                    <div class="alert alert-success mt-4">
+                        <%= messages.success %>
                     </div>
-                    <form action="/cart/delete/<%= item._id %>" method="POST" class="ml-4">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button type="submit" class="text-red-500 hover:text-red-700 transition duration-200">
-                            <i class="fas fa-trash fa-lg"></i>
-                        </button>
-                    </form>
-                </li>
-            <% }); %>
+                <% } %>
+                <% if (messages.error) { %>
+                    <div class="alert alert-danger mt-4">
+                        <%= messages.error %>
+                    </div>
+                <% } %>
+            </div>
         </ul>
-        <h2 class="text-center text-blue-900 text-2xl font-bold mt-6">Total: <%= total %></h2>
-
-        <a href="/cart/checkout" class="block w-full text-center mt-6 px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-700 transition duration-200 cursor-pointer">Comprar</a>
-
-        <% if (messages.success) { %>
-            <div class="alert alert-success mt-4">
-                <%= messages.success %>
-            </div>
-        <% } %>
-        <% if (messages.error) { %>
-            <div class="alert alert-danger mt-4">
-                <%= messages.error %>
-            </div>
-        <% } %>
     </div>
+    <script>
+        window.onload = function() {
+            document.body.classList.add('loaded');
+        };
+    </script>
 </body>
 </html>

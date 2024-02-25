@@ -7,47 +7,68 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Document</title>
 </head>
-<body class="bg-teal-200">
+<body class="bg-zinc-100 pt-[70px]">
     <%- include('navbar') %>
     <div class="max-w-2xl mx-auto p-6">
-        <h2 class="text-center text-blue-900 text-3xl font-bold mb-6">Termina tu compra</h2>
-
-        <ul class="space-y-4">
-            <% products.forEach(product => { %>
-                <li class="bg-white rounded-lg shadow-md p-4">
-                    <h2 class="text-blue-900 text-xl font-bold mb-2"><%= product.name %></h2>
-                    <p class="text-blue-700">Precio: <%= product.price %></p>
-                    <p class="text-blue-700">Cantidad: <%= product.quantity %></p>
-                    <p class="text-blue-700">Subtotal: <%= product.price * product.quantity %></p>
+        <h2 class="text-center text-stone-800  text-3xl font-bold mb-6">Termina tu compra</h2>
+        <h3 class="text-stone-800 text-lg font-bold mb-2">Detalle de tu compra</h3>
+        <ul class="rounded-md bg-white shadow-sm ">
+            <% let subtotal = 0; %>
+            <% products.forEach((product, index) => { %>
+                <li class="p-4 <%= index !== 0 ? 'border-t border-gray-200' : '' %>">
+                    <h2 class="text-stone-800 text-lg font-bold mb-2"><%= product.name %></h2>
+                    <p class="text-stone-800"><span>Precio: </span><span class="font-semibold">$<%= Number(product.price).toFixed(2) %></span></p>
+                    <p class="text-stone-800"><span>Cantidad: </span><span class="font-semibold"><%= product.quantity %></span></p>
+                    <p class="text-stone-800"><span>Subtotal: </span><span class="font-semibold">$<%= (product.price * product.quantity).toFixed(2) %></span></p>
+                    <% subtotal += product.price * product.quantity; %>
                 </li>
             <% }) %>
         </ul>
-        <h2 class="text-center text-blue-900 text-2xl font-bold mt-6">Total: <%= total %></h2>
-        <form action="/cart/checkout" method="POST" class="mt-6 space-y-4">
-            <div>
-                <label for="name" class="block text-blue-900">Nombre:</label>
-                <input type="text" id="name" name="name" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-900">
+        <ul class="bg-white rounded-md shadow-sm mt-4">
+            <li class="p-3">
+                <h2 class="text-lg mb-2"><span>Subtotal: </span><span class="font-semibold">$<%= subtotal.toFixed(2) %></span></h2>
+            </li>
+            <li class="p-3">
+                <h2 class="text-lg mb-2"><span>Impuestos: </span><span class="font-semibold">$<%= (subtotal * 0.15).toFixed(2) %></span></h2>
+            </li>
+            <% if (category === 'medium' || category === 'top') { %>
+                <li class="p-3 pb-1 <%= category === 'medium' ? 'bg-gray-200' : 'bg-yellow-200' %>">
+                    <h3 class="text-xs mb-1"><span>¡Sos categoría </span><span class="font-semibold <%= category === 'medium' ? 'text-gray-500' : 'text-yellow-600' %>"><%= category %></span>!</h3>
+                    <h2 class="text-lg pb-1"><span>Descuento (<%= category === 'medium' ? '10%' : '20%' %>): </span><span class="font-semibold">- $<%= ((subtotal * 1.15) * (category === 'medium' ? 0.10 : 0.20)).toFixed(2) %></span></h2>
+                </li>
+            <% } %>
+            <li class="p-3 <%= (category === 'medium' || category === 'top') ? '' : 'border-t border-gray-200' %>">
+                <h2 class="text-xl mb-2"><span>Total: </span><span class="font-bold">$<%= ((subtotal * 1.15) * (category === 'medium' ? 0.90 : (category === 'top' ? 0.80 : 1))).toFixed(2) %></span></h2>
+            </li>
+        </ul>
+        <h3 class="text-stone-800 text-lg font-bold mb-2  mt-6">Completa tus datos</h3>
+        <form action="/cart/checkout" method="POST" class="space-y-4 bg-zinc-200 p-5 rounded-md shadow-sm">
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                    <label for="name" class="block text-stone-800">Nombre:</label>
+                    <input type="text" id="name" name="name" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-800">
+                </div>
+                <div class="w-full md:w-1/2 px-3">
+                    <label for="lastname" class="block text-stone-800">Apellido:</label>
+                    <input type="text" id="lastname" name="lastname" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-800">
+                </div>
             </div>
             <div>
-                <label for="lastname" class="block text-blue-900">Apellido:</label>
-                <input type="text" id="lastname" name="lastname" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-900">
+                <label for="email" class="block text-stone-800">Correo:</label>
+                <input type="email" id="email" name="email" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-800">
             </div>
             <div>
-                <label for="email" class="block text-blue-900">Correo:</label>
-                <input type="email" id="email" name="email" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-900">
+                <label for="address" class="block text-stone-800">Dirección:</label>
+                <textarea id="address" name="address" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-800"></textarea>
             </div>
             <div>
-                <label for="address" class="block text-blue-900">Dirección:</label>
-                <textarea id="address" name="address" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-900"></textarea>
-            </div>
-            <div>
-                <label for="payment" class="block text-blue-900">Método de pago:</label>
-                <select id="payment" name="payment" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-900">
+                <label for="payment" class="block text-stone-800">Método de pago:</label>
+                <select id="payment" name="payment" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-800">
                     <option value="credit">Tarjeta de credito</option>
                     <option value="debit">Tarjeta de débito</option>
                 </select>
             </div>
-            <button type="submit" class="block w-full text-center mt-6 px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-700 transition duration-200 cursor-pointer">Confirmar</button>
+            <button type="submit" class="block w-full text-center mt-6 px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-700 transition duration-200 cursor-pointer">Confirmar</button>
         </form>
     </div>
 </body>

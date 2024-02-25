@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const cartController = require('../controllers/cartController');
+const { pool } = require('../../db');
 
 exports.getAllOrders = async (userId) => {
     try {
@@ -43,12 +44,24 @@ exports.createOrder = async (userId, customerDetails) => {
     });
 
     await order.save();
+
+    const orderCount = await Order.countDocuments({ userId: userId });
+
+    let newCategory;
+    if (orderCount >= 5) {
+        newCategory = 'top';
+    } else if (orderCount >= 3) {
+        newCategory = 'medium';
+    } else {
+        newCategory = 'low';
+    }
+
+    await pool.query('UPDATE users SET category = $1 WHERE id = $2', [newCategory, userId]);
+
     return order;
 }
 
 exports.getAllProducts = async (orderId) => {
-    // Buscar el pedido en la base de datos
     const order = await Order.findById(orderId).populate('products.product');
-    // Devolver los productos asociados con el pedido
     return order.products;
 }

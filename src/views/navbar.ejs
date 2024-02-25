@@ -6,21 +6,26 @@
     <link href="/stylesheets/style.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </head>
-<nav class="bg-teal-100 shadow-md flex justify-end items-center p-5">
+<nav class="bg-zinc-300 shadow-sm flex justify-between items-center p-5 fixed top-0 w-full z-50">
+    <a href="/" class="text-xl font-bold text-blue-600 hover:text-blue-500 transition duration-200">
+        <i class="fas fa-home"></i> Tienda Online
+    </a>
     <div class="flex space-x-4">
-        <a href="/products" class="text-blue-900 hover:text-blue-700 transition duration-200">Catálogo</a>
+        <a href="/products" class="text-stone-800 hover:text-stone-700 transition duration-200">Catálogo</a>
         <% if (!user) { %>
-            <a href="/user/login" class="text-blue-900 hover:text-blue-700 transition duration-200">Iniciar sesión</a>
-            <a href="/user/register" class="text-blue-900 hover:text-blue-700 transition duration-200">Registrarse</a>
+            <a href="/user/login" class="text-stone-800 hover:text-stone-700 transition duration-200">Iniciar sesión</a>
+            <a href="/user/register" class="text-stone-800 hover:text-stone-700 transition duration-200">Registrarse</a>
         <% } else { %>
-            <a href="/cart" class="text-blue-900 hover:text-blue-700 transition duration-200">
-                <i class="fas fa-shopping-cart"></i>
-                <% if (totalItemCount > 0) { %>
-                    <span class="ml-1"><%= totalItemCount %></span>
-                <% } %>
-            </a>
+            <div class="flex items-center">
+                <a href="/cart" class="text-stone-800 hover:text-stone-700 transition duration-200 relative flex items-center">
+                    <i class="fas fa-shopping-cart"></i>
+                    <% if (totalItemCount > 0) { %>
+                        <span class="ml-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"><%= totalItemCount %></span>
+                    <% } %>
+                </a>
+            </div>
             <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" class="text-blue-900 hover:text-blue-700 transition duration-200">
+                <button @click="open = !open" class="text-stone-800 hover:text-stone-700 transition duration-200">
                     <i class="fas fa-user"></i>
                 </button>
                 <ul
@@ -32,16 +37,25 @@
                     x-transition:leave="transition transform origin-top-right ease-in duration-200"
                     x-transition:leave-start="opacity-100 scale-100"
                     x-transition:leave-end="opacity-0 scale-75"
-                    class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg"
+                    class="absolute z-50 right-0 mt-2 w-48 bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg"
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="options-menu"
                 >
+                    <% if (!isAdmin) { %>
+                        <li class="px-4 py-2 hover:bg-gray-100">
+                            <a href="/orders" class="text-stone-800 hover:text-stone-700 block transition duration-200">Mis pedidos</a>
+                        </li>
+                    <% } %>
+                    
+
+                    <% if (isAdmin) { %>
+                        <li class="px-4 py-2 hover:bg-gray-100">
+                            <a href="/admin" class="text-stone-800 hover:text-stone-700 block transition duration-200">Admin</a>
+                        </li>
+                    <% } %>
                     <li class="px-4 py-2 hover:bg-gray-100">
-                        <a href="/orders" class="text-gray-700 hover:text-gray-900 block transition duration-200">Mis pedidos</a>
-                    </li>
-                    <li class="px-4 py-2 hover:bg-gray-100">
-                        <a href="/user/logout" class="text-gray-700 hover:text-gray-900 block transition duration-200">Cerrar sesión</a>
+                        <a href="/user/logout" class="text-stone-800 hover:text-stone-700 block transition duration-200">Cerrar sesión</a>
                     </li>
                 </ul>
             </div>

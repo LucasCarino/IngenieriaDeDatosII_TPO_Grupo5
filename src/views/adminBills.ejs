@@ -21,6 +21,7 @@
         z-index: 10;
     }
 </style>
+
 <body class="bg-zinc-100 pt-[70px]">
     <%- include('navbar') %>
         <h1 class="text-center text-2xl font-bold my-6">Lista de facturas</h1>
@@ -28,17 +29,14 @@
             <table class="w-full text-md bg-white shadow-md rounded mb-4">
                 <thead>
                     <tr class="border-b">
-                        <th class="text-left p-3 px-5">ID</th>
                         <th class="text-left p-3 px-5">Número de factura</th>
                         <th class="text-left p-3 px-5">Fecha</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% bills.forEach(bill=> { %>
-                        <tr class="border-b item-row bill-row" data-id="<%= bill._id %>">
-                            <td class="p-3 px-5">
-                                <%= bill._id %>
-                            </td>
+                        <tr class="border-b item-row bill-row hover:bg-orange-100 cursor-pointer"
+                            data-id="<%= bill._id %>">
                             <td class="p-3 px-5">
                                 <%= bill.billNumber %>
                             </td>
@@ -50,23 +48,24 @@
                 </tbody>
             </table>
         </div>
-        <div id="bill-dialog" class="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center">
-            <div class="bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
+        <div id="bill-dialog" class="fixed z-10 w-7/12 overflow-y-auto flex items-center justify-center shadow-2xl">
+            <div class="bg-zinc-100 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:w-full" >
+                <div class="bg-zinc-100 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            <h3 class="text-2xl leading-6 font-medium text-stone-800 text-center" id="modal-title">
                                 Detalles de la factura
                             </h3>
                             <div class="mt-2">
-                                <p id="bill-details" class="text-sm leading-5 text-gray-500"></p>
+                                <p id="bill-details" class="text-sm leading-5 text-stone-800"></p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div class="bg-zinc-100 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <span class="flex w-full rounded-md shadow-sm sm:ml-3 sm:w-auto">
-                        <button id="close-dialog" class="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150 sm:text-sm sm:leading-5">
+                        <button id="close-dialog"
+                            class="inline-flex justify-center w-full rounded-md border border-transparent px-4 py-2 bg-indigo-600 text-base leading-6 font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo transition ease-in-out duration-150 sm:text-sm sm:leading-5">
                             Cerrar
                         </button>
                     </span>
@@ -84,26 +83,27 @@
                 .then(response => response.json())
                 .then(data => {
                     const details = `
-                    Número de factura: ${data.billNumber}<br>
-                    Fecha: ${new Date(data.date).toLocaleDateString("es-ES")}<br>
-                    Nombre: ${data.order.customerDetails.name}<br>
-                    Apellido: ${data.order.customerDetails.lastname}<br>
-                    Dirección: ${data.order.customerDetails.address}<br>
-                    Email: ${data.order.customerDetails.email}<br>
-                    Pago: ${data.order.customerDetails.payment}<br>
-                    Subtotal: ${data.order.subtotal}<br>
-                    Impuestos: ${data.order.taxes}<br>
-                    Total: ${data.order.total}
-                `;
-                document.getElementById('bill-details').innerHTML = details;
+                        <p class="border-b border-black py-2">Número de factura: ${data.billNumber}</p>
+                        <p class="border-b border-black py-2">Fecha: ${new Date(data.date).toLocaleDateString("es-ES")}</p>
+                        <p class="border-b border-black py-2">Nombre: ${data.order.customerDetails.name}</p>
+                        <p class="border-b border-black py-2">Apellido: ${data.order.customerDetails.lastname}</p>
+                        <p class="border-b border-black py-2">Dirección: ${data.order.customerDetails.address}</p>
+                        <p class="border-b border-black py-2">Email: ${data.order.customerDetails.email}</p>
+                        <p class="border-b border-black py-2">Pago: ${data.order.customerDetails.payment}</p>
+                        <p class="border-b border-black py-2">Subtotal: ${data.order.subtotal}</p>
+                        <p class="border-b border-black py-2">Impuestos: ${data.order.taxes}</p>
+                        <p class="border-b border-black py-2">Total: ${data.order.total}</p>
+                    `;
+                    document.getElementById('bill-details').innerHTML = details;
 
-                // Muestra el diálogo
-                document.getElementById('bill-dialog').style.display = 'block';
-            });
+
+                    // Muestra el diálogo
+                    document.getElementById('bill-dialog').style.display = 'block';
+                });
         });
     });
 
-    document.getElementById('close-dialog').addEventListener('click', function() {
+    document.getElementById('close-dialog').addEventListener('click', function () {
         document.getElementById('bill-dialog').style.display = 'none';
     });
 </script>

@@ -86,8 +86,6 @@ exports.loginPost = (req, res, next) => {
             }
             req.session.user = req.user;
             req.session.isAdmin = user.isAdmin;
-            
-            console.log(req.session.isAdmin);
             if (req.body.remember) {
                 req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 días
             } else {

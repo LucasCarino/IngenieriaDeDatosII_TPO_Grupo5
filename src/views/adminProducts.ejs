@@ -22,6 +22,8 @@
                         <th class="text-left p-3 px-5">ID</th>
                         <th class="text-left p-3 px-5">Nombre</th>
                         <th class="text-left p-3 px-5">Precio</th>
+                        <th class="hidden">URL</th>
+                        <th class="hidden">Descripción</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,17 +38,19 @@
                             <td class="p-3 px-5">
                                 $<%= product.price.toFixed(2) %>
                             </td>
-                            <td class="hidden">
+                            <td class="hidden item-url">
                                 <%= product.url %>
                             </td>
-                            <td class="hidden">
+                            <td class="hidden item-description">
                                 <%= product.description %>
                             </td>
                             <td class="p-3 px-5 flex justify-evenly">
-                                <div class="bg-blue-400 hover:bg-blue-600 transition duration-200 rounded-md flex items-center justify-center w-6 h-6 edit-item">
+                                <div
+                                    class="bg-blue-400 hover:bg-blue-600 transition duration-200 rounded-md flex items-center justify-center w-6 h-6 edit-item">
                                     <i class="fas fa-pencil-alt cursor-pointer"></i>
                                 </div>
-                                <div class="bg-red-500 hover:bg-red-700 transition duration-200 rounded-md flex items-center justify-center w-6 h-6 remove-item" data-id="<%= product._id %>">
+                                <div class="bg-red-500 hover:bg-red-700 transition duration-200 rounded-md flex items-center justify-center w-6 h-6 remove-item"
+                                    data-id="<%= product._id %>">
                                     <i class="fas fa-times cursor-pointer"></i>
                                 </div>
                             </td>
@@ -134,7 +138,7 @@
                 });
             });
 
-            
+
 
         });
 
@@ -144,8 +148,8 @@
             var itemName = row.find("td:nth-child(2)").text().trim();
             var itemPrice = row.find("td:nth-child(3)").text().trim();
             itemPrice = itemPrice.replace(/[$,]/g, '');
-            var itemDescription = row.find("td:nth-child(4)").text().trim();
-            var itemUrl = row.find("td:nth-child(5)").text().trim();
+            var itemUrl = row.find("td.item-url").text().trim();
+            var itemDescription = row.find("td.item-description").text().trim();
 
             var formHtml = `
                 <form id="edit-item-form" class="space-y-4">
@@ -154,16 +158,16 @@
                         <input type="text" id="name" name="name" value="${itemName}" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                     <div>
+                        <label for="price" class="block text-sm font-medium text-gray-700">Precio:</label>
+                        <input type="text" id="price" name="price" value="${itemPrice}" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
                         <label for="description" class="block text-sm font-medium text-gray-700">Descripción:</label>
                         <input type="text" id="description" name="description" value="${itemDescription}" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                     <div>
                         <label for="url" class="block text-sm font-medium text-gray-700">URL:</label>
                         <input type="text" id="url" name="url" value="${itemUrl}" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    </div>
-                    <div>
-                        <label for="price" class="block text-sm font-medium text-gray-700">Precio:</label>
-                        <input type="text" id="price" name="price" value="${itemPrice}" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                     <div>
                         <input type="submit" value="Guardar" class="block w-full text-center mt-6 px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-700 transition duration-200 cursor-pointer">
@@ -178,10 +182,11 @@
                 event.preventDefault();
 
                 var itemData = {
+                    id: itemId,
                     name: $("#name").val(),
+                    price: $("#price").val(),
                     description: $("#description").val(),
                     url: $("#url").val(),
-                    price: $("#price").val()
                 };
 
                 for (var key in itemData) {
@@ -220,14 +225,13 @@
 
         $(".remove-item").on("click", function () {
             var productId = $(this).data('id');
-            // console.log(productId)
             $("<div>¿Estás seguro de que quieres eliminar este producto?</div>").dialog({
                 resizable: false,
                 height: "auto",
                 width: 400,
                 modal: true,
                 buttons: {
-                    "Eliminar": function() {
+                    "Eliminar": function () {
                         $(this).dialog("close");
 
                         // Realizar la solicitud AJAX para eliminar el producto
@@ -240,7 +244,7 @@
                             }
                         });
                     },
-                    Cancelar: function() {
+                    Cancelar: function () {
                         $(this).dialog("close");
                     }
                 }
